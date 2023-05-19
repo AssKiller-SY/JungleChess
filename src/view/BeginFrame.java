@@ -2,6 +2,7 @@ package view;
 
 import controller.GameController;
 import model.Chessboard;
+import model.PlayMusic;
 import model.PlayerColor;
 
 import javax.swing.*;
@@ -47,6 +48,8 @@ public class BeginFrame extends JFrame {
             chessGameFrame.timeLabel.setVisible(true);
             chessGameFrame.getChessboardComponent().getGameController().reset();
             chessGameFrame.setVisible(true);
+            String musicPath = "resource/music/bgm.wav";
+            PlayMusic.playMusic(musicPath, 0);
         });
         button.setLocation(100, 100);
         button.setSize(200, 60);

@@ -120,6 +120,8 @@ public class Chessboard {
             blueDead.add(defender);
         }
         steps.add(new Step(src, dest, attacker.getOwner(), defender));
+        String eatPath = "resource/music/eat.wav";
+        PlayMusic.playMusic(eatPath,1);
     }
 
     public Cell[][] getGrid() {

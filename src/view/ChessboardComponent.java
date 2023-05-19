@@ -6,6 +6,7 @@ import model.Cell;
 import model.ChessPiece;
 import model.Chessboard;
 import model.ChessboardPoint;
+import model.PlayMusic;
 import view.Animal.*;
 
 import javax.swing.*;
@@ -200,6 +201,8 @@ public class ChessboardComponent extends JComponent {
     @Override
     protected void processMouseEvent(MouseEvent e) {
         if (e.getID() == MouseEvent.MOUSE_PRESSED) {
+            String click_path = "resource/music/click.wav";
+            PlayMusic.playMusic(click_path, 1);
             JComponent clickedComponent = (JComponent) getComponentAt(e.getX(), e.getY());
             if (clickedComponent.getComponentCount() == 0) {
                 System.out.print("None chess here and ");

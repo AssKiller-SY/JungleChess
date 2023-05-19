@@ -16,6 +16,7 @@ public class Main {
             */
             BeginFrame beginFrame = new BeginFrame();
             beginFrame.setVisible(true);
+
         });
     }
 }
