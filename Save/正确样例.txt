@@ -1,0 +1,28 @@
+17
+b from (6,6) to (5,6), no capture
+r from (2,6) to (3,6), no capture
+b from (5,6) to (4,6), no capture
+r from (3,6) to (2,6), no capture
+b from (4,6) to (3,6), no capture
+r from (1,5) to (1,6), no capture
+b from (3,6) to (2,6), eat Elephant
+r from (1,6) to (1,5), no capture
+b from (2,6) to (2,5), no capture
+r from (1,5) to (1,6), no capture
+b from (2,5) to (1,5), no capture
+r from (1,6) to (2,6), no capture
+b from (1,5) to (1,4), no capture
+r from (0,6) to (0,5), no capture
+b from (1,4) to (1,5), no capture
+r from (2,4) to (2,3), no capture
+b from (1,5) to (1,4), no capture
+r
+L * * * * T * 
+* D * * R * * 
+R * l W * * C 
+* * * * * * * 
+* * * * * * * 
+* * * * * * * 
+E * W * l * * 
+* C * * * D * 
+T * * * * * L 
