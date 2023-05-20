@@ -8,3 +8,7 @@ Just to test how to push it from local to remote.
 ```agsl
 Add some sound effect,include bgm, click and eat.
 ```
+### Jungle Chess version-3.0
+```agsl
+Add Playback function
+```
