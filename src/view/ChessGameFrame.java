@@ -43,6 +43,7 @@ public class ChessGameFrame extends JFrame {
         addSaveButton();
         addLoadButton();
         addRegretButton();
+        addPlaybackButton();
 
         Image image = new ImageIcon("resource\\background.jpg").getImage();
         image = image.getScaledInstance(1100, 810,Image.SCALE_DEFAULT);
@@ -165,6 +166,19 @@ public class ChessGameFrame extends JFrame {
         button.addActionListener(e -> {
             System.out.println("Regret One Step");
             chessboardComponent.getGameController().regretOneStep();
+        });
+    }
+
+    private void addPlaybackButton() {
+        JButton button = new JButton("Playback");
+        button.setLocation(HEIGHT + 800, HEIGHT / 10 + 494);
+        button.setSize(180, 54);
+        button.setFont(new Font("Rockwell", Font.BOLD, 20));
+        add(button);
+
+        button.addActionListener(e -> {
+            System.out.println("Playback the game");
+            chessboardComponent.getGameController().playback();
         });
     }
 }

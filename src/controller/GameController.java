@@ -469,7 +469,40 @@ public class GameController implements GameListener {
                 view.revalidate();
             }
             model.steps.remove(model.steps.size() - 1);
-        } catch (Exception ex) {
-        }
+        } catch (Exception ex) {}
+    }
+
+    public void playback() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Step> stepsCopy = model.steps;
+                reset();
+                for (Step step : stepsCopy) {
+                    try {
+                        Thread.sleep(1000);
+                        //System.out.println("TESTplayback");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println(step);
+                    if(step.eaten == null) {
+                        model.moveChessPiece(step.src, step.dest);
+                        view.setChessComponentAtGrid(step.dest, view.removeChessComponentAtGrid(step.src));
+                        view.repaint();
+                        swapColor();
+                    } else {
+                        model.captureChessPiece(step.src, step.dest);
+                        view.removeChessComponentAtGrid(step.dest);
+                        view.setChessComponentAtGrid(step.dest, view.removeChessComponentAtGrid(step.src));
+                        view.repaint();
+                        view.revalidate();
+                        swapColor();
+                    }
+                }
+            }
+        });
+        thread.start();
     }
 }
