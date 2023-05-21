@@ -473,7 +473,7 @@ public class GameController implements GameListener {
 
         if (!file.getName().endsWith(".txt")) {
             JOptionPane.showMessageDialog(null, "文件后缀名错误\n继续当前游戏",
-                    "存档不合法", JOptionPane.ERROR_MESSAGE);
+                    "存档不合法,错误编码101", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
@@ -500,12 +500,12 @@ public class GameController implements GameListener {
                 String stepInfo = StepInfo.get(i);
                 if ((i & 1) == 0 && stepInfo.charAt(0) == 'b') {
                     JOptionPane.showMessageDialog(null, "当前玩家回合错误\n继续游戏",
-                            "存档不合法", JOptionPane.ERROR_MESSAGE);
+                            "存档不合法，错误编码104", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
                 if ((i & 1) == 1 && stepInfo.charAt(0) == 'r') {
                     JOptionPane.showMessageDialog(null, "当前玩家回合错误\n继续游戏",
-                            "存档不合法", JOptionPane.ERROR_MESSAGE);
+                            "存档不合法，错误编码104", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
             }
@@ -514,24 +514,29 @@ public class GameController implements GameListener {
 
                 for (int i = StepCount + 2; i < StepCount + 11; i++) {
                     String stepInfo = StepInfo.get(i);
-                    if (stepInfo.length() != 14) {
-                        JOptionPane.showMessageDialog(null, "棋盘列数错误\n继续游戏",
-                                "存档不合法", JOptionPane.ERROR_MESSAGE);
-                        return false;
-                    }
-
+                    System.out.println(stepInfo);
+                    int cnt = 0;
                     for (int j = 0; j < stepInfo.length(); j++) {
+                        if(((j & 1) == 1 && stepInfo.charAt(j) == ' ')) continue;
+                        cnt++;
                         if (!checkName(stepInfo.charAt(j))) {
-                            if(((j & 1) == 1 && stepInfo.charAt(j) == ' ')) continue;
                             JOptionPane.showMessageDialog(null, "棋子名称错误\n继续游戏",
-                                    "存档不合法", JOptionPane.ERROR_MESSAGE);
+                                    "存档不合法,错误编码103", JOptionPane.ERROR_MESSAGE);
                             return false;
                         }
                     }
+
+                    if (cnt != 7) {
+                        JOptionPane.showMessageDialog(null, "棋盘列数错误\n继续游戏",
+                                "存档不合法,错误编码102", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+
+
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "棋盘行数错误\n继续游戏",
-                        "存档不合法", JOptionPane.ERROR_MESSAGE);
+                        "存档不合法,错误编码102", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
 

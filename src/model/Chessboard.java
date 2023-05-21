@@ -191,7 +191,7 @@ public class Chessboard {
         if(attacker.getOwner() == defender.getOwner()) {return false;}
 
         int rank = defender.getRank();
-        if(isTrap(defender, dest)) rank = 1;
+        if(isTrap(defender, dest)) rank = 0;
 
 
         boolean leagalDistance = calculateDistance(src, dest) == 1;
@@ -222,7 +222,7 @@ public class Chessboard {
         if (attacker.getName().equals("Rat")) {
             return leagalDistance &&
                     (isRiver(src)&&isRiver(dest) || !isRiver(src)&&!isRiver(dest)) &&
-                        (rank ==1 || rank == 8);
+                        (rank <=1 || rank == 8);
         }
 
         return false;
