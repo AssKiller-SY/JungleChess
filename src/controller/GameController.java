@@ -13,6 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Random;
 
 /**
  * Controller is the connection between model and view,
@@ -20,6 +23,15 @@ import java.util.ArrayList;
  * analyzes and then hands over to the model for processing
  * [in this demo the request methods are onPlayerClickCell() and onPlayerClickChessPiece()]
  */
+class AImove {
+    ChessboardPoint src, dest;
+    int value;
+    public AImove(ChessboardPoint src, ChessboardPoint dest, int value) {
+        this.src = src;
+        this.dest = dest;
+        this.value = value;
+    }
+}
 public class GameController implements GameListener {
 
     private static int turn = 1;
@@ -28,11 +40,16 @@ public class GameController implements GameListener {
     public ChessboardComponent view;
     private Chessboard model;
     private PlayerColor winner;
+    private ArrayList<AImove> AImoves;
+    public PlayerColor getCurrentPlayer() {
+        return currentPlayer;
+    }
+
     private PlayerColor currentPlayer;
     private ArrayList<ChessboardPoint> canReachPoint;
     // Record whether there is a selected piece before
     private ChessboardPoint selectedPoint;
-
+    public int isAIPlaying = 0;
 
     public GameController(ChessboardComponent view, Chessboard model) {
         this.view = view;
@@ -59,6 +76,8 @@ public class GameController implements GameListener {
     private boolean checkName(char c) {
         return c == 'E' || c == 'L' || c == 'T' || c == 'l' || c == 'W' || c == 'D' || c == 'C' || c == 'R' || c == '*';
     }
+
+
 
     public void cancelLighten() {
         canReachPoint = null;
@@ -108,6 +127,7 @@ public class GameController implements GameListener {
         view.repaint();
         component.revalidate();
     }
+
     //点击非棋子的格子
     @Override
     public void onPlayerClickCell(ChessboardPoint point, CellComponent component) {
@@ -122,10 +142,167 @@ public class GameController implements GameListener {
                 announceWinner();
                 reset();
             }
-            // TODO: if the chess enter Dens or Traps and so on
+
+            if(isAIPlaying == 1) {
+                //System.out.println("test");
+                AIEasy();
+            }
+            if(isAIPlaying == 2) {
+                AINormal();
+            }
         }
     }
 
+    private void AIEasy() {
+        AImoves = new ArrayList<>();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 7; j++) {
+                        if (model.getGrid()[i][j].getPiece() != null && model.getGrid()[i][j].getPiece().getOwner() == currentPlayer) {
+                            ChessboardPoint src = new ChessboardPoint(i,j);
+                            canReachPoint = getCanReachPoint(src);
+                            if(canReachPoint.size() == 0) continue;
+                            for (ChessboardPoint dest : canReachPoint) {
+                                AImoves.add(new AImove(src,dest,0));
+                            }
+                        }
+                    }
+                }
+                Random random = new Random();
+                int randomMove = random.nextInt(AImoves.size());
+                ChessboardPoint src = AImoves.get(randomMove).src;
+                ChessboardPoint dest = AImoves.get(randomMove).dest;
+                if(model.isValidMove(src,dest)) {
+                    model.moveChessPiece(src, dest);
+                    view.setChessComponentAtGrid(dest, view.removeChessComponentAtGrid(src));
+                } else {
+                    model.captureChessPiece(src, dest);
+                    view.removeChessComponentAtGrid(dest);
+                    view.setChessComponentAtGrid(dest, view.removeChessComponentAtGrid(src));
+                }
+                canReachPoint = null;
+                cancelLighten();
+                swapColor();
+                view.repaint();
+                view.gridComponents[dest.getRow()][dest.getCol()].revalidate();
+                checkWin();
+                if (winner != null){
+                    announceWinner();
+                    reset();
+                }
+            }
+        });
+        thread.start();
+    }
+
+    private void AINormal() {
+        //System.out.println(turn);
+        AImoves = new ArrayList<>();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(400);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                ChessboardPoint dens = new ChessboardPoint(8,3);
+                for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 7; j++) {
+                        if (model.getGrid()[i][j].getPiece() != null
+                                && model.getGrid()[i][j].getPiece().getOwner() == currentPlayer) {
+                            ChessboardPoint src = new ChessboardPoint(i,j);
+                            canReachPoint = getCanReachPoint(src);
+                            if(canReachPoint.size() == 0) continue;
+                            for (ChessboardPoint dest : canReachPoint) {
+                                int value = 0;
+
+                                for (int k = 0; k < 9; k++) {
+                                    for (int l = 0; l < 7; l++) {
+                                        if (model.getGrid()[k][l].getPiece() != null
+                                                && model.getGrid()[k][l].getPiece().getOwner() != currentPlayer){
+                                            if(model.isValidCapture(new ChessboardPoint(k,l),src) &&
+                                                    !model.isValidCapture(new ChessboardPoint(k,l),dest))
+                                                value += 19*model.getGrid()[src.getRow()][src.getCol()].getPiece().getRank();
+                                        }
+                                    }
+                                }
+
+                                if(model.isValidMove(src,dest)) {
+
+                                    if(model.calculateDistance(src,dens) > model.calculateDistance(dest,dens)) {
+                                        value += 17 - model.calculateDistance(dest,dens);
+                                    } else {
+                                        value -= 17 - model.calculateDistance(dest,dens);
+                                    }
+                                    model.moveChessPiece(src,dest);
+                                    ChessPiece AIchess = model.getGrid()[dest.getRow()][dest.getCol()].getPiece();
+                                    for (int k = 0; k < 8; k++) {
+                                        int xs = dest.getRow();
+                                        int ys = dest.getCol();
+                                        int xe = xs+dir_x[k];
+                                        int ye = ys+dir_y[k];
+
+                                        if(xe<0||ye<0||xe>8||ye>6) continue;
+
+                                        if(model.getGrid()[xe][ye].getPiece() != null
+                                                && model.getGrid()[xe][ye].getPiece().getOwner() != currentPlayer) {
+                                            ChessPiece chessPiece = model.getGrid()[xe][ye].getPiece();
+
+                                            if(model.isValidCapture(new ChessboardPoint(xe,ye),dest)) {
+                                                value -= AIchess.getRank()*17;
+                                                //System.out.println(AIchess.getName()+" "+chessPiece.getName());
+                                            }
+                                        }
+                                    }
+                                    model.moveChessPiece(dest,src);
+                                } else {
+                                    value += 16*model.getGrid()[dest.getRow()][dest.getCol()].getPiece().getRank();
+                                }
+                                AImoves.add(new AImove(src,dest,value));
+                            }
+                        }
+                    }
+                }
+                Collections.sort(AImoves, new Comparator<AImove>() {
+                    @Override
+                    public int compare(AImove o1, AImove o2) {
+                        return o2.value - o1.value;
+                    }
+                });
+
+                ChessboardPoint src = AImoves.get(0).src;
+                ChessboardPoint dest = AImoves.get(0).dest;
+                if(model.isValidMove(src,dest)) {
+                    model.moveChessPiece(src, dest);
+                    view.setChessComponentAtGrid(dest, view.removeChessComponentAtGrid(src));
+                } else {
+                    model.captureChessPiece(src, dest);
+                    view.removeChessComponentAtGrid(dest);
+                    view.setChessComponentAtGrid(dest, view.removeChessComponentAtGrid(src));
+                }
+                canReachPoint = null;
+                cancelLighten();
+                swapColor();
+                view.repaint();
+                view.gridComponents[dest.getRow()][dest.getCol()].revalidate();
+                checkWin();
+                if (winner != null){
+                    announceWinner();
+                    reset();
+                }
+            }
+        });
+        thread.start();
+    }
     //点击有棋子的格子
     @Override
     public void onPlayerClickChessPiece(ChessboardPoint point, AnimalChessComponent component) {
@@ -169,6 +346,13 @@ public class GameController implements GameListener {
             if (winner != null) {
                 announceWinner();
                 reset();
+            }
+
+            if(isAIPlaying == 1) {
+                AIEasy();
+            }
+            if(isAIPlaying == 2) {
+                AINormal();
             }
             // TODO: Implement capture function
         }

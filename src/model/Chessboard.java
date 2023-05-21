@@ -15,6 +15,7 @@ import static model.Constant.CHESSBOARD_ROW_SIZE;
 public class Chessboard {
     private Cell[][] grid;
     public ArrayList<Step> steps;
+
     public void setBlueDead(ArrayList<ChessPiece> blueDead) {
         this.blueDead = blueDead;
     }
@@ -35,8 +36,7 @@ public class Chessboard {
     private ArrayList<ChessPiece> redDead;
 
     public Chessboard() {
-        this.grid =
-                new Cell[Constant.CHESSBOARD_ROW_SIZE.getNum()][Constant.CHESSBOARD_COL_SIZE.getNum()];//19X19
+        this.grid = new Cell[Constant.CHESSBOARD_ROW_SIZE.getNum()][Constant.CHESSBOARD_COL_SIZE.getNum()];//19X19
 
         blueDead = new ArrayList<>();
         redDead = new ArrayList<>();
@@ -82,7 +82,7 @@ public class Chessboard {
         return grid[point.getRow()][point.getCol()];
     }
 
-    private int calculateDistance(ChessboardPoint src, ChessboardPoint dest) {
+    public int calculateDistance(ChessboardPoint src, ChessboardPoint dest) {
         return Math.abs(src.getRow() - dest.getRow()) + Math.abs(src.getCol() - dest.getCol());
     }
 

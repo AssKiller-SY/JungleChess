@@ -4,7 +4,12 @@
 ```agsl
 Just to test how to push it from local to remote.
 ```
-### Jungle Chess version-3.0
+## Jungle Chess version-3.0
 ```agsl
 Add some sound effect,include bgm, click and eat.
+```
+
+## Jungle Chess version-4.0
+```agsl
+Add PVE, change the chesscomponent.
 ```

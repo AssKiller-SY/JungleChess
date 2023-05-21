@@ -44,6 +44,6 @@ public class TigerChessComponent extends AnimalChessComponent {
             pic = new ImageIcon("resource/chess/blueTiger.png");
         }
         Image image = pic.getImage();
-        g.drawImage(image, 0, 0, size, size, null);
+        g.drawImage(image, 5, 5, size-10, size-10, null);
     }
 }

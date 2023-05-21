@@ -2,11 +2,7 @@ package view;
 
 
 import controller.GameController;
-import model.Cell;
-import model.ChessPiece;
-import model.Chessboard;
-import model.ChessboardPoint;
-import model.PlayMusic;
+import model.*;
 import view.Animal.*;
 
 import javax.swing.*;
@@ -70,30 +66,39 @@ public class ChessboardComponent extends JComponent {
                 if (grid[i][j].getPiece() != null) {
                     ChessPiece chessPiece = grid[i][j].getPiece();
                     System.out.println(chessPiece.getOwner());
+                    AnimalChessComponent animalChessComponent;
                     switch (chessPiece.getName()) {
                         case "Elephant":
-                            gridComponents[i][j].add(new ElephantChessComponent(chessPiece.getOwner(), CHESS_SIZE));
+                            animalChessComponent = new ElephantChessComponent(chessPiece.getOwner(), CHESS_SIZE);
+                            gridComponents[i][j].add(animalChessComponent);
                             break;
                         case "Lion":
-                            gridComponents[i][j].add(new LionChessComponent(chessPiece.getOwner(), CHESS_SIZE));
+                            animalChessComponent = new LionChessComponent(chessPiece.getOwner(), CHESS_SIZE);
+                            gridComponents[i][j].add(animalChessComponent);
                             break;
                         case "Tiger":
-                            gridComponents[i][j].add(new TigerChessComponent(chessPiece.getOwner(), CHESS_SIZE));
+                            animalChessComponent = new TigerChessComponent(chessPiece.getOwner(), CHESS_SIZE);
+                            gridComponents[i][j].add(animalChessComponent);
                             break;
                         case "Leopard":
-                            gridComponents[i][j].add(new LeopardChessComponent(chessPiece.getOwner(), CHESS_SIZE));
+                            animalChessComponent = new LeopardChessComponent(chessPiece.getOwner(), CHESS_SIZE);
+                            gridComponents[i][j].add(animalChessComponent);
                             break;
                         case "Wolf":
-                            gridComponents[i][j].add(new WolfChessComponent(chessPiece.getOwner(), CHESS_SIZE));
+                            animalChessComponent = new WolfChessComponent(chessPiece.getOwner(), CHESS_SIZE);
+                            gridComponents[i][j].add(animalChessComponent);
                             break;
                         case "Dog":
-                            gridComponents[i][j].add(new DogChessComponent(chessPiece.getOwner(), CHESS_SIZE));
+                            animalChessComponent = new DogChessComponent(chessPiece.getOwner(), CHESS_SIZE);
+                            gridComponents[i][j].add(animalChessComponent);
                             break;
                         case "Cat":
-                            gridComponents[i][j].add(new CatChessComponent(chessPiece.getOwner(), CHESS_SIZE));
+                            animalChessComponent = new CatChessComponent(chessPiece.getOwner(), CHESS_SIZE);
+                            gridComponents[i][j].add(animalChessComponent);
                             break;
                         case "Rat":
-                            gridComponents[i][j].add(new RatChessComponent(chessPiece.getOwner(), CHESS_SIZE));
+                            animalChessComponent = new RatChessComponent(chessPiece.getOwner(), CHESS_SIZE);
+                            gridComponents[i][j].add(animalChessComponent);
                             break;
                     }
                 }
@@ -201,6 +206,7 @@ public class ChessboardComponent extends JComponent {
     @Override
     protected void processMouseEvent(MouseEvent e) {
         if (e.getID() == MouseEvent.MOUSE_PRESSED) {
+            if(gameController.isAIPlaying != 0 && gameController.getCurrentPlayer() == PlayerColor.RED) return;
             String click_path = "resource/music/click.wav";
             PlayMusic.playMusic(click_path, 1);
             JComponent clickedComponent = (JComponent) getComponentAt(e.getX(), e.getY());
